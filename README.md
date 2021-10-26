@@ -9,5 +9,5 @@
 
 #### Dev Dependancies
 - Jest (A testing framework).
-- Babel (Compiles code so it's readable by Jest).
+- Babel (Compiles code).
 - SuperTest (Allows Jest to test Express, though I am positive it would not be beyond reach to make tests without it).

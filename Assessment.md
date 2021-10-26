@@ -35,7 +35,6 @@ Response Body on success
 
 ## User Confirmation
 
-
 On successful signup user will receive a OTP on his mobile or his email to validate mobile number which was provided during sign up flow.
 
 Request Body

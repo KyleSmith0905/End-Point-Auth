@@ -15,7 +15,7 @@ const firebaseConfig = {
 	appId: "1:436328559305:web:891ce88e7220f9f3639318"
 };
 
-//const app = initializeApp(firebaseConfig);
+// @ts-ignore
 const adminApp = initializeAdminApp({credential: cert(serviceAccount)});
 const app = initializeApp(firebaseConfig);
 export const authAdmin = getAuthAdmin(adminApp);
