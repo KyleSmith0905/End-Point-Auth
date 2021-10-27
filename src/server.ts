@@ -25,8 +25,8 @@ const Router = async (req: IIncomingMessageWithBody, res: ServerResponse): Promi
 	
 	let routerFunction: undefined | ((req: IIncomingMessageWithBody, res: any) => Promise<void>);
 
-	const pagePath = './pages' + url + '.ts';
 	try {
+		const pagePath = './pages' + url + '.ts';
 		const pageModule = await import(pagePath);
 		routerFunction = pageModule.default;
 	}

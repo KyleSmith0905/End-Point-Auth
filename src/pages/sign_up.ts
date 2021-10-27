@@ -1,7 +1,7 @@
 // Http
 import { ServerResponse } from 'http';
 // Local Code
-import { authAdmin } from '../firebase';
+import { auth } from '../firebase';
 import { IIncomingMessageWithBody, IUserInfo } from '../shared';
 import { UserRecord } from 'firebase-admin/auth';
 
@@ -30,7 +30,7 @@ export default async (req: IIncomingMessageWithBody, res: ServerResponse) => {
 	
 	let userCredential: UserRecord;
 	try {
-		userCredential = await authAdmin.createUser(authInfo);
+		userCredential = await auth.createUser(authInfo);
 		if (userCredential === undefined) throw new Error;
 	}
 	catch (err: any) {

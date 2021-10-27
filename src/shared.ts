@@ -24,6 +24,7 @@ export const ReadMessage = (messageContainer: IIncomingMessageWithBody | Respons
 		let body = '';
 
 		if (messageContainer instanceof IncomingMessage) {
+			messageContainer.readableLength 
 			messageContainer.setEncoding('utf8');
 			messageContainer.on('data', (chunk: string) => {
 				body += chunk;
@@ -32,17 +33,12 @@ export const ReadMessage = (messageContainer: IIncomingMessageWithBody | Respons
 				resolve(JSON.parse(body));
 			});
 		}
-
-		else {
+		else if (messageContainer instanceof Response) {
 			messageContainer.json()
 			.then((data) => {
 				resolve(data);
 			})
 			.catch(() => {
-				// Warns against using the wrong type of response during testing.
-				if (process.env.NODE_ENV === 'testing') console.error('Text-only writes should return as {message: `${text}`}')
-
-				// Accepts text-only responses if it does occur.
 				messageContainer.text()
 				.then((data) => {
 					resolve(data);
