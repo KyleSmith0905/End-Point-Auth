@@ -1,4 +1,3 @@
-require("@babel/register")
 import fetch from 'node-fetch';
 import { Server } from 'http';
 // Local Code
@@ -38,7 +37,6 @@ describe('Sign Up', () => {
 			method: 'POST',
 			body: JSON.stringify(signUpUser),
 			headers: {
-				'Accept': 'application/json',
 				'Content-Type': 'application/json'
 			}
 		})		
@@ -70,19 +68,13 @@ describe('Sign Up', () => {
 
 describe('User Confirmation', () => {
 	it('Can confirm user', async () => {
-		const userData = generateUserData();
+		const userInfo = generateUserData();
 		
-		const user = await auth.createUser({
-			email: userData.email,
-			emailVerified: false,
-			phoneNumber: userData.phonenumber,
-			password: userData.password,
-			displayName: userData.username,
-		});
+		await signUpUser(userInfo)
 		
 		const res = await fetch('http://localhost:3000/user_confirmation', {
 			method: 'POST',
-			body: JSON.stringify({username: user.displayName, password: userData.password, userId: user.uid}),
+			body: JSON.stringify({username: userInfo.username, password: userInfo.password}),
 			headers: {
 				'Content-Type': 'application/json'
 			}
@@ -95,19 +87,15 @@ describe('User Confirmation', () => {
 	})
 
 	it('Cannot confirm user that are already verified', async () => {
-		const userData = generateUserData();
+		const userInfo = generateUserData();
 		
-		const user = await auth.createUser({
-			email: userData.email,
-			emailVerified: true,
-			phoneNumber: userData.phonenumber,
-			password: userData.password,
-			displayName: userData.username,
-		});
+		const userId = (await signUpUser(userInfo)).userId;
 		
+		await auth.updateUser(userId, {emailVerified: true});
+
 		const res = await fetch('http://localhost:3000/user_confirmation', {
 			method: 'POST',
-			body: JSON.stringify({username: user.displayName, password: userData.password, userId: user.uid}),
+			body: JSON.stringify({username: userInfo.username, password: userInfo.password}),
 			headers: {
 				'Content-Type': 'application/json'
 			}
@@ -122,19 +110,13 @@ describe('User Confirmation', () => {
 
 describe('Sign In', () => {
 	it('Can sign in user', async () => {
-		const userData = generateUserData();
+		const userInfo = generateUserData();
 		
-		const user = await auth.createUser({
-			email: userData.email,
-			emailVerified: false,
-			phoneNumber: userData.phonenumber,
-			password: userData.password,
-			displayName: userData.username,
-		});
+		await signUpUser(userInfo)
 		
 		const res = await fetch('http://localhost:3000/sign_in', {
 			method: 'POST',
-			body: JSON.stringify({username: user.displayName, password: userData.password, userId: user.uid}),
+			body: JSON.stringify({username: userInfo.username, password: userInfo.password}),
 			headers: {
 				'Content-Type': 'application/json'
 			}
@@ -147,3 +129,14 @@ describe('Sign In', () => {
 		expect(body.expires).toBeDefined();
 	})
 })
+
+const signUpUser = async (userData: any) => {
+	const res = await fetch('http://localhost:3000/sign_up', {
+		method: 'POST',
+		body: JSON.stringify(userData),
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	})
+	return ReadMessage(res);
+}

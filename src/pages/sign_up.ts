@@ -1,14 +1,13 @@
 // Http
 import { ServerResponse } from 'http';
 // Local Code
-import { auth } from '../firebase';
+import { auth, firestore } from '../firebase';
 import { IIncomingMessageWithBody, IUserInfo } from '../shared';
 import { UserRecord } from 'firebase-admin/auth';
 
 export default async (req: IIncomingMessageWithBody, res: ServerResponse) => {
 	const userInfo: IUserInfo = req.body;
 
-	// Prevent server from making an account with invalid data
 	if (userInfo === undefined) {
 		res.statusCode = 400;
 		res.write(JSON.stringify({message: 'No user info provided'}));
@@ -39,8 +38,22 @@ export default async (req: IIncomingMessageWithBody, res: ServerResponse) => {
 		res.write(JSON.stringify({message: err.message?? 'An error occurred'}));
 		return res.end();
 	}
-	
-	// Created document successfully
+		
+	const batch = firestore.batch();
+
+	const indexRef = firestore.collection('index').doc('users').collection('usernames').doc(userInfo.username);
+	batch.create(indexRef, {userId: userCredential.uid});
+
+	const userRef = firestore.collection('users').doc(userCredential.uid);
+	batch.create(userRef, {name: userInfo.username});
+
+	await batch.commit().catch(() => {
+		auth.deleteUser(userCredential.uid).catch(() => {});
+		res.statusCode = 400;
+		res.write(JSON.stringify({message: 'That username already exists.'}));
+		return res.end();
+	});
+		
 	userInfo.userId = userCredential.uid;
 	res.statusCode = 201;
 	res.write(JSON.stringify(userInfo));

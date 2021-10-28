@@ -17,7 +17,7 @@ export const startServer = () => {
 
 const Router = async (req: IIncomingMessageWithBody, res: ServerResponse): Promise<any> => {
 	
-	// Ensures url is only the path
+	// Ensures url doesn't include query string.
 	let url = req.url;
 	if (req.url?.includes('?')) {
 		url = req.url.split('?')[0];

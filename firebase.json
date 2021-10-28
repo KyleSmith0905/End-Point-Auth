@@ -5,6 +5,9 @@
     },
     "ui": {
       "enabled": false
+    },
+    "firestore": {
+      "port": 8080
     }
   }
 }

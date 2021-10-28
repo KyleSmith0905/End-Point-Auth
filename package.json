@@ -2,8 +2,15 @@
 	"name": "halen-assessment",
 	"main": "index.ts",
 	"author": "KyleSmith",
+	"scripts": {
+		"start": "tsc index.ts --outDir build",
+		"test": "firebase emulators:exec \"npx jest\"",
+		"test:detectOpenHandles": "firebase emulators:exec \"npx jest --detectOpenHandles\""
+	},
+	"engines": {
+		"node": ">=16.5.0"
+	},
 	"dependencies": {
-		"@babel/register": "^7.15.3",
 		"firebase-admin": "^10.0.0",
 		"node-fetch": "^3.0.0",
 		"typescript": "^4.4.4"
@@ -18,12 +25,5 @@
 		"babel-jest": "^27.3.1",
 		"babel-polyfill": "^6.26.0",
 		"jest": "^27.3.1"
-	},
-	"scripts": {
-		"start": "tsc index.ts --outDir build",
-		"test": "firebase emulators:exec \"npx jest\"",
-		"test:detectOpenHandles": "firebase emulators:exec \"npx jest --detectOpenHandles\"",
-		"testWithoutFirebase": "jest",
-		"testWithoutFirebase:detectOpenHandles": "jest --detectOpenHandles"
 	}
 }
