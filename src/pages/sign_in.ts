@@ -46,7 +46,7 @@ const signInUser = async (body: any): Promise<any> => {
 			'Content-Type': 'application/json'
 		}
 	})
-	.catch ((err) => {
+	.catch ((err: any) => {
 		return err;
 	})
 	

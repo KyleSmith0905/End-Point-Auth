@@ -3,7 +3,8 @@ import { IIncomingMessageWithBody, ReadMessage } from './shared';
 
 export const startServer = () => {
 	const server = createServer(async (req: IIncomingMessageWithBody, res) => {
-
+		
+		
 		const requestWithMessage = await ReadMessage(req);
 		if (typeof requestWithMessage === 'object') req.body = requestWithMessage;
 		
@@ -12,6 +13,8 @@ export const startServer = () => {
 		return;
 	}).listen(3000);
 
+	console.log('Server Created...');
+	
 	return server;
 }
 

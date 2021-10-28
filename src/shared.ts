@@ -1,4 +1,4 @@
-import { Response } from 'node-fetch'
+import { Response } from 'node-fetch';
 import { IncomingMessage } from 'http';
 import { auth, firestore } from './firebase';
 
@@ -49,12 +49,12 @@ export const ReadMessage = (messageContainer: IIncomingMessageWithBody | Respons
 		}
 		else if (messageContainer instanceof Response) {
 			messageContainer.json()
-			.then((data) => {
+			.then((data: any) => {
 				resolve(data);
 			})
 			.catch(() => {
 				messageContainer.text()
-				.then((data) => {
+				.then((data: any) => {
 					resolve(data);
 				})
 				.catch(() => {

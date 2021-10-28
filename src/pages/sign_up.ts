@@ -7,6 +7,7 @@ import { UserRecord } from 'firebase-admin/auth';
 
 export default async (req: IIncomingMessageWithBody, res: ServerResponse) => {
 	const userInfo: IUserInfo = req.body;
+	let streamEnded = false;
 
 	if (userInfo === undefined) {
 		res.statusCode = 400;
@@ -51,8 +52,12 @@ export default async (req: IIncomingMessageWithBody, res: ServerResponse) => {
 		auth.deleteUser(userCredential.uid).catch(() => {});
 		res.statusCode = 400;
 		res.write(JSON.stringify({message: 'That username already exists.'}));
+		streamEnded = true;
 		return res.end();
 	});
+
+	// @ts-ignore
+	if (streamEnded === true) return;
 		
 	userInfo.userId = userCredential.uid;
 	res.statusCode = 201;
