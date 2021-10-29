@@ -8,13 +8,17 @@ import { ReadMessage } from '../src/shared';
 
 jest.setTimeout(5000);
 
-// Randomize user info every time. however, the default data works perfect everytime.
+// Deleting all users is a dangerous operation to have anywhere in code.
+// This ensures no tests interfare with each other.
+let userInterval = 0;
 const generateUserData = () => {
+	userInterval++;
+	const userIntervalString = userInterval.toString();
 	return {
-		username: "test" + Math.floor(Math.random() * 1000).toString(),
-		password: "test" + Math.floor(Math.random() * 100).toString() + "@test.com",
-		email: "test" + Math.floor(Math.random() * 100).toString() + "@test.com",
-		phonenumber: "+" + Math.floor(Math.random() * 10000000000).toString().padStart(11, '1')
+		username: "test" + userIntervalString,
+		password: "test" + userIntervalString + "@test.com",
+		email: "test" + userIntervalString + "@test.com",
+		phonenumber: "+" + '1' + userIntervalString.padStart(10, '0')
 	}
 }
 
@@ -33,16 +37,13 @@ describe('Sign Up', () => {
 
 		const signUpUser = generateUserData();
 		
-		const res = await fetch('http://localhost:3000/sign_up', {
+		const res = await fetch('http://localhost:8080/sign_up', {
 			method: 'POST',
-			body: JSON.stringify(signUpUser),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})		
+			body: JSON.stringify(signUpUser)
+		})
 		
 		const body = await ReadMessage(res);
-		
+
 		expect(res.status).toBe(201);
 		expect(body.userId).toBeDefined();
 		expect(body.username).toBe(signUpUser.username);
@@ -54,7 +55,7 @@ describe('Sign Up', () => {
 	it('Cannot sign up user with insufficient data', async () => {
 		const signUpUser = {}
 		
-		const res = await fetch('http://localhost:3000/sign_up', {
+		const res = await fetch('http://localhost:8080/sign_up', {
 			method: 'POST',
 			body: JSON.stringify(signUpUser),
 			headers: {
@@ -72,7 +73,7 @@ describe('User Confirmation', () => {
 		
 		await signUpUser(userInfo)
 		
-		const res = await fetch('http://localhost:3000/user_confirmation', {
+		const res = await fetch('http://localhost:8080/user_confirmation', {
 			method: 'POST',
 			body: JSON.stringify({username: userInfo.username, password: userInfo.password}),
 			headers: {
@@ -93,7 +94,7 @@ describe('User Confirmation', () => {
 		
 		await auth.updateUser(userId, {emailVerified: true});
 
-		const res = await fetch('http://localhost:3000/user_confirmation', {
+		const res = await fetch('http://localhost:8080/user_confirmation', {
 			method: 'POST',
 			body: JSON.stringify({username: userInfo.username, password: userInfo.password}),
 			headers: {
@@ -114,7 +115,7 @@ describe('Sign In', () => {
 		
 		await signUpUser(userInfo)
 		
-		const res = await fetch('http://localhost:3000/sign_in', {
+		const res = await fetch('http://localhost:8080/sign_in', {
 			method: 'POST',
 			body: JSON.stringify({username: userInfo.username, password: userInfo.password}),
 			headers: {
@@ -131,7 +132,7 @@ describe('Sign In', () => {
 })
 
 const signUpUser = async (userData: any) => {
-	const res = await fetch('http://localhost:3000/sign_up', {
+	const res = await fetch('http://localhost:8080/sign_up', {
 		method: 'POST',
 		body: JSON.stringify(userData),
 		headers: {
