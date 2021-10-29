@@ -34,8 +34,8 @@ export const getFirebaseEmail = async (body: any): Promise<any> => {
 	return body;
 }
 
-export const ReadMessage = (messageContainer: IIncomingMessageWithBody | Response): Promise<any> | void => {
-	return new Promise((resolve) => {
+export const ReadMessage = (messageContainer: IIncomingMessageWithBody | Response): Promise<any> => {
+	return new Promise((resolve, reject) => {
 		let body = '';
 
 		if (messageContainer instanceof IncomingMessage) {
@@ -44,21 +44,26 @@ export const ReadMessage = (messageContainer: IIncomingMessageWithBody | Respons
 				body += chunk;
 			});
 			messageContainer.on('end', () => {
-				resolve(JSON.parse(body));
+				try {
+					return resolve(JSON.parse(body));
+				}
+				catch {
+					return reject();
+				}
 			});
 		}
 		else if (messageContainer instanceof Response) {
 			messageContainer.json()
 			.then((data: any) => {
-				resolve(data);
+				return resolve(data);
 			})
 			.catch(() => {
 				messageContainer.text()
 				.then((data: any) => {
-					resolve(data);
+					return resolve(data);
 				})
 				.catch(() => {
-					resolve({message: 'No data was returned.'});
+					return resolve({message: 'No data was returned.'});
 				})
 			})
 		}
