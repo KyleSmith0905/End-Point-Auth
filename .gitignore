@@ -2,4 +2,5 @@
 
 serviceAccountKey.json
 firebase-debug.log
+firestore-debug.log
 build
