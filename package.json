@@ -1,5 +1,5 @@
 {
-	"name": "halen-assessment",
+	"name": "end-point-auth",
 	"main": "index.ts",
 	"author": "KyleSmith",
 	"scripts": {
